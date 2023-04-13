@@ -17,11 +17,29 @@ contract RestaurantFactory {
 
         Restaurant restaurant = new Restaurant(_name, msg.sender);
         restaurants[msg.sender] = address(restaurant);
+        restaurantOwners.push(msg.sender);
         ++totalRestaurants;
     }
 
     function getTotalRestaurants() public view returns (uint256) {
         return totalRestaurants;
+    }
+
+    function getRestaurantIndex(address _addr) public view returns (uint256) {
+        require(restaurants[_addr] != address(0), "Restaurant not found");
+        return _getIndexOfElement(restaurantOwners, _addr);
+    }
+
+    function _getIndexOfElement(
+        address[] memory array,
+        address element
+    ) private pure returns (uint256) {
+        for (uint256 i = 0; i < array.length; i++) {
+            if (array[i] == element) {
+                return i;
+            }
+        }
+        revert("Element not found");
     }
 
     function getOwnerByIndex(uint256 _id) public view returns (address) {
