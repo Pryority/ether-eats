@@ -27,6 +27,10 @@ contract Restaurant {
         owner = _owner;
     }
 
+    function getInitParams() public view returns (bytes memory) {
+        return abi.encode(name, owner);
+    }
+
     modifier onlyOwner() {
         require(
             msg.sender == owner,
