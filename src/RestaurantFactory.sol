@@ -4,20 +4,30 @@ pragma solidity ^0.8.13;
 import "./Restaurant.sol";
 
 contract RestaurantFactory {
-    mapping(address => address) public restaurants;
-    address[] public restaurantOwners;
+    struct RestaurantInfo {
+        address owner;
+        address restaurant;
+        string name;
+    }
+
+    RestaurantInfo[] public restaurants;
     uint256 public totalRestaurants;
 
     function createRestaurant(string memory _name) public payable {
         require(bytes(_name).length > 0, "Restaurant NAME required");
         require(
-            restaurants[msg.sender] == address(0),
+            getRestaurantByOwner(msg.sender) == address(0),
             "Restaurant already exists"
         );
 
         Restaurant restaurant = new Restaurant(_name, msg.sender);
-        restaurants[msg.sender] = address(restaurant);
-        restaurantOwners.push(msg.sender);
+        restaurants.push(
+            RestaurantInfo({
+                owner: msg.sender,
+                restaurant: address(restaurant),
+                name: _name
+            })
+        );
         ++totalRestaurants;
     }
 
@@ -26,24 +36,43 @@ contract RestaurantFactory {
     }
 
     function getRestaurantIndex(address _addr) public view returns (uint256) {
-        require(restaurants[_addr] != address(0), "Restaurant not found");
-        return _getIndexOfElement(restaurantOwners, _addr);
+        require(
+            getRestaurantByOwner(_addr) != address(0),
+            "Restaurant not found"
+        );
+        return _getIndexOfElement(_addr);
     }
 
-    function _getIndexOfElement(
-        address[] memory array,
-        address element
-    ) private pure returns (uint256) {
-        for (uint256 i = 0; i < array.length; i++) {
-            if (array[i] == element) {
+    function _getIndexOfElement(address _addr) private view returns (uint256) {
+        for (uint256 i = 0; i < restaurants.length; i++) {
+            if (restaurants[i].owner == _addr) {
                 return i;
             }
         }
         revert("Element not found");
     }
 
+    function getRestaurantBytes(
+        address _addr
+    ) public view returns (bytes memory) {
+        address restaurantAddr = getRestaurantByOwner(_addr);
+        require(restaurantAddr != address(0), "Restaurant not found");
+
+        Restaurant restaurant = Restaurant(restaurantAddr);
+        bytes memory restaurantBytes = abi.encodePacked(
+            type(Restaurant).creationCode,
+            restaurant.getInitParams() // Assuming Restaurant contract has a function to get its constructor arguments
+        );
+
+        return restaurantBytes;
+    }
+
     function getOwnerByIndex(uint256 _id) public view returns (address) {
-        return restaurantOwners[_id];
+        require(
+            _id >= 0 && _id < getTotalRestaurants(),
+            "Invalid restaurant index"
+        );
+        return restaurants[_id].owner;
     }
 
     function getRestaurantByIndex(
@@ -53,12 +82,17 @@ contract RestaurantFactory {
             _id >= 0 && _id < getTotalRestaurants(),
             "Invalid restaurant index"
         );
-        return restaurants[getOwnerByIndex(_id)];
+        return restaurants[_id].restaurant;
     }
 
     function getRestaurantByOwner(
         address _owner
     ) public view returns (address) {
-        return restaurants[_owner];
+        for (uint256 i = 0; i < restaurants.length; i++) {
+            if (restaurants[i].owner == _owner) {
+                return restaurants[i].restaurant;
+            }
+        }
+        return address(0);
     }
 }
