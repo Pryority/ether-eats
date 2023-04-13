@@ -4,6 +4,6 @@
 
 ### RestaurantFactory
 
-***Testing**
+Testing
 
-> forge test --match-path ./test/RestaurantFactory.t.sol
+`forge test --match-path ./test/RestaurantFactory.t.sol`
