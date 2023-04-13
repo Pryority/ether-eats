@@ -20,7 +20,6 @@ contract RestaurantFactoryTest is Test {
         rf.createRestaurant(name);
         address restaurantAddr = rf.getRestaurantByOwner(owner);
         Restaurant restaurant = Restaurant(restaurantAddr);
-
         (
             string memory restaurantName,
             address restaurantOwner,
@@ -36,4 +35,42 @@ contract RestaurantFactoryTest is Test {
         rf.createRestaurant(name);
         assertEq(rf.getTotalRestaurants(), 1);
     }
+
+    function testGetRestaurantByIndex() public {
+        vm.prank(owner);
+        // Create a restaurant
+        string memory name = "My Restaurant";
+        rf.createRestaurant(name);
+
+        // Get the address of the created restaurant
+        address restaurantAddr = rf.getRestaurantByOwner(owner);
+
+        // Get the restaurant index
+        uint256 restaurantIndex = rf.getRestaurantIndex(owner);
+
+        // Retrieve the restaurant by index
+        address retrievedRestaurant = rf.getRestaurantByIndex(restaurantIndex);
+
+        // Assert that the retrieved restaurant address is the same as the created restaurant address
+        assertEq(retrievedRestaurant, restaurantAddr);
+    }
+
+    // function testGetRestaurantByIndex() public {
+    //     // Create a restaurant
+    //     string memory name = "My Restaurant";
+    //     rf.createRestaurant(name);
+
+    //     // Get the address of the created restaurant
+    //     address restaurantAddr = rf.getRestaurantByOwner(owner);
+    //     Restaurant restaurant = Restaurant(restaurantAddr);
+
+    //     // Get the restaurant index
+    //     uint256 restaurantIndex = rf.getRestaurantIndex(owner);
+
+    //     // Retrieve the restaurant by index
+    //     address retrievedRestaurant = rf.getRestaurantByIndex(restaurantIndex);
+
+    //     // Assert that the retrieved restaurant address is the same as the created restaurant address
+    //     assertEq(retrievedRestaurant, restaurantAddr);
+    // }
 }
