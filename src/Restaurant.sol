@@ -1,13 +1,43 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
+/** ---------------------------------------- */
+/**  Create, read, update, and delete your   */
+/**          restaurant menu items           */
+/** ---------------------------------------- */
+
 contract Restaurant {
+    /** ------------------------------------ */
+    /** CONSTRUCTOR                          */
+    /** ------------------------------------ */
+    constructor(string memory _name, address _owner) {
+        name = _name;
+        owner = _owner;
+    }
+
+    /** ------------------------------------ */
+    /** STRUCTS                              */
+    /** ------------------------------------ */
+    struct Option {
+        bytes32 name;
+        uint256 price;
+    }
+    struct MenuItem {
+        bytes32 name;
+        uint256 price;
+        bool isAvailable;
+        bytes32 category;
+        bytes32[] options;
+    }
+
     /** ------------------------------------ */
     /** VARIABLES                            */
     /** ------------------------------------ */
     string public name;
     address public owner;
     uint256[] public itemIds;
+    uint256 public menuItemsTotal;
+    mapping(bytes32 => MenuItem) public menuItems; // Change to mapping
 
     /** ------------------------------------ */
     /** EVENTS                               */
@@ -18,19 +48,16 @@ contract Restaurant {
         address indexed newOwner,
         uint256[] itemIds
     );
+    event MenuItemAdded(
+        bytes32 name,
+        uint256 price,
+        bytes32 category,
+        bytes32[] options
+    );
 
     /** ------------------------------------ */
-    /** CONSTRUCTOR                          */
+    /** MODIFIERS                            */
     /** ------------------------------------ */
-    constructor(string memory _name, address _owner) {
-        name = _name;
-        owner = _owner;
-    }
-
-    function getInitParams() public view returns (bytes memory) {
-        return abi.encode(name, owner);
-    }
-
     modifier onlyOwner() {
         require(
             msg.sender == owner,
@@ -42,19 +69,43 @@ contract Restaurant {
     /** ------------------------------------ */
     /** FUNCTIONS                            */
     /** ------------------------------------ */
-    function addProduct(string memory _name, uint256 _price) public payable {
-        // Add implementation for adding product to the restaurant
+    function getInitParams() public view returns (bytes memory) {
+        return abi.encode(name, owner);
     }
 
-    function getProductCount() public view returns (uint256) {
-        // Add implementation for getting product count for the restaurant
+    function addMenuItem(
+        bytes32 _name,
+        uint256 _price,
+        bool _isAvailable,
+        bytes32 _category,
+        bytes32[] memory _options
+    ) public payable {
+        // Create a new MenuItem and add it to the menuItems mapping
+        MenuItem memory newItem = MenuItem(
+            _name,
+            _price,
+            _isAvailable,
+            _category,
+            _options
+        );
+        bytes32 newItemId = _name; // Convert string to bytes32 for use as key
+        menuItems[newItemId] = newItem;
+
+        // Emit an event to indicate that a new item has been added
+        emit MenuItemAdded(_name, _price, _category, _options);
+
+        ++menuItemsTotal;
+    }
+
+    function getMenuItemsTotal() public view returns (uint256) {
+        return menuItemsTotal;
     }
 
     function setRestaurant(
         string memory _name,
         address _newOwner,
         uint256[] memory _ItemIds
-    ) public onlyOwner {
+    ) public payable onlyOwner {
         name = _name;
         owner = _newOwner;
         itemIds = _ItemIds;
