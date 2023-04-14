@@ -9,7 +9,7 @@ contract RestaurantTest is Test {
     Restaurant public restaurant;
     string public restaurantName;
     address public owner;
-    uint256[] public itemIds;
+    bytes32[] public itemIds;
 
     struct Option {
         bytes32 name;
@@ -25,7 +25,7 @@ contract RestaurantTest is Test {
     event RestaurantUpdated(
         string name,
         address indexed owner,
-        uint256[] itemIds
+        bytes32[] itemIds
     );
 
     function setUp() public {
@@ -126,43 +126,13 @@ contract RestaurantTest is Test {
         vm.stopPrank();
     }
 
-    // function testGetMenuItemByName() public {
-    //     vm.prank(owner);
-    //     bytes32 expectedItemName = "Product 1";
-    //     uint256 expectedItemPrice = 100;
-    //     bool expectedIsAvailable = true;
-    //     bytes32 expectedItemCategory = "Main";
-    //     bytes32[] memory expectedItemOptions = new bytes32[](2);
-    //     expectedItemOptions[0] = "Option1";
-    //     expectedItemOptions[1] = "Option2";
-
-    //     restaurant.addMenuItem(
-    //         expectedItemName,
-    //         expectedItemPrice,
-    //         expectedIsAvailable,
-    //         expectedItemCategory,
-    //         expectedItemOptions
-    //     );
-
-    //     Restaurant.MenuItem memory retrievedItem = restaurant.getMenuItemByName("Product 1");
-
-    //     assertEq(retrievedItem.name, expectedItemName);
-    //     assertEq(retrievedItem.price, expectedItemPrice);
-    //     assertEq(retrievedItem.isAvailable, expectedIsAvailable);
-    //     assertEq(retrievedItem.category, expectedItemCategory);
-    //     assertEq(retrievedItem.options.length, expectedItemOptions.length);
-    //     for (uint256 i = 0; i < expectedItemOptions.length; i++) {
-    //         assertEq(retrievedItem.options[i], expectedItemOptions[i]);
-    //     }
-    // }
-
     function testSetRestaurant() public {
         vm.prank(owner);
         string memory newName = "New Restaurant";
         address newOwner = address(0x1234567890123456789012345678901234567890);
-        uint256[] memory newItemIds = new uint256[](2);
-        newItemIds[0] = 1;
-        newItemIds[1] = 2;
+        bytes32[] memory newItemIds = new bytes32[](2);
+        newItemIds[0] = bytes32(uint256(1));
+        newItemIds[1] = bytes32(uint256(2));
         restaurant.setRestaurant(newName, newOwner, newItemIds);
         assertEq(restaurant.name(), newName);
         assertEq(restaurant.owner(), newOwner);
@@ -171,13 +141,14 @@ contract RestaurantTest is Test {
     }
 
     function testGetRestaurant() public {
+        vm.prank(owner);
         (
             string memory retrievedName,
             address retrievedOwner,
-            uint256[] memory retrievedItemIds
+            Restaurant.MenuItem[] memory retrievedItems
         ) = restaurant.getRestaurant(address(this));
         assertEq(retrievedName, restaurantName);
         assertEq(retrievedOwner, owner);
-        assertEq(retrievedItemIds.length, 0); // Assuming itemIds should be empty initially
+        assertEq(retrievedItems.length, 0);
     }
 }

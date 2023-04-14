@@ -23,11 +23,11 @@ contract RestaurantFactoryTest is Test {
         (
             string memory restaurantName,
             address restaurantOwner,
-            uint256[] memory productIds
+            Restaurant.MenuItem[] memory items
         ) = restaurant.getRestaurant(owner);
         assertEq(restaurantName, name);
         assertEq(restaurantOwner, owner);
-        assertEq(productIds.length, 0); // Assuming productIds should be empty initially
+        assertEq(items.length, 0); // Assuming productIds should be empty initially
     }
 
     function testGetTotalRestaurants() public {
