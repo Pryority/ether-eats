@@ -7,7 +7,7 @@ contract Restaurant {
     /** ------------------------------------ */
     string public name;
     address public owner;
-    uint256[] public productIds;
+    uint256[] public itemIds;
 
     /** ------------------------------------ */
     /** EVENTS                               */
@@ -16,7 +16,7 @@ contract Restaurant {
         string name,
         address indexed owner,
         address indexed newOwner,
-        uint256[] productIds
+        uint256[] itemIds
     );
 
     /** ------------------------------------ */
@@ -53,19 +53,19 @@ contract Restaurant {
     function setRestaurant(
         string memory _name,
         address _newOwner,
-        uint256[] memory _productIds
+        uint256[] memory _ItemIds
     ) public onlyOwner {
         name = _name;
         owner = _newOwner;
-        productIds = _productIds;
+        itemIds = _ItemIds;
 
-        emit RestaurantUpdated(name, msg.sender, _newOwner, productIds);
+        emit RestaurantUpdated(name, msg.sender, _newOwner, itemIds);
     }
 
     function getRestaurant(
         address addr
     ) public view returns (string memory, address, uint256[] memory) {
         require(addr != address(0), "Invalid address");
-        return (name, owner, productIds);
+        return (name, owner, itemIds);
     }
 }
