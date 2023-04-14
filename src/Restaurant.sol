@@ -80,22 +80,32 @@ contract Restaurant {
         bytes32 _category,
         bytes32[] memory _options
     ) public payable {
+        bytes32 itemName = bytes32(_name);
         // Create a new MenuItem and add it to the menuItems mapping
         MenuItem memory newItem = MenuItem(
-            _name,
+            itemName,
             _price,
             _isAvailable,
             _category,
             _options
         );
-        bytes32 newItemId = _name; // Convert string to bytes32 for use as key
-        menuItems[newItemId] = newItem;
+        menuItems[itemName] = newItem;
 
-        // Emit an event to indicate that a new item has been added
         emit MenuItemAdded(_name, _price, _category, _options);
 
         ++menuItemsTotal;
     }
+
+    function getMenuItem(bytes32 _name) public view returns (MenuItem memory) {
+        return menuItems[_name];
+    }
+
+    // function getMenuItemByName(
+    //     string memory _name
+    // ) public view returns (MenuItem memory) {
+    //     bytes32 itemName = bytes32(uint256(keccak256(abi.encodePacked(_name))));
+    //     return menuItems[itemName];
+    // }
 
     function getMenuItemsTotal() public view returns (uint256) {
         return menuItemsTotal;
