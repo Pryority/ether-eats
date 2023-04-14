@@ -21,12 +21,30 @@ contract RestaurantTest is Test {
         assertEq(restaurant.owner(), owner);
     }
 
-    // function testAddItem() public {
-    //     restaurant.addItem("Product 1", 100);
-    //     restaurant.addItem("Product 2", 200);
-    //     uint256 productCount = restaurant.getItemCount();
-    //     assertEq(productCount, 2);
-    // }
+    function testAddMenuItem() public {
+        bytes32 expectedItemName = "Product 1";
+        uint256 expectedItemPrice = 100;
+        bool expectedIsAvailable = true;
+        bytes32 expectedItemCategory = "Main";
+        bytes32[] memory expectedItemOptions = new bytes32[](2);
+        expectedItemOptions[0] = "Option1";
+        expectedItemOptions[1] = "Option2";
+
+        restaurant.addMenuItem(
+            expectedItemName,
+            expectedItemPrice,
+            expectedIsAvailable,
+            expectedItemCategory,
+            expectedItemOptions
+        );
+
+        assertEq(restaurant.getMenuItemsTotal(), 1);
+        assertEq(expectedItemName, "Product 1");
+        assertEq(expectedItemPrice, 100);
+        assertEq(expectedIsAvailable, true);
+        assertEq(expectedItemCategory, "Main");
+        // assertEq(expectedItemOptions, bytes32["Option1"](2));
+    }
 
     function testSetRestaurant() public {
         vm.prank(owner);
