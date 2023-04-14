@@ -35,7 +35,7 @@ contract Restaurant {
     /** ------------------------------------ */
     string public name;
     address public owner;
-    uint256[] public itemIds;
+    bytes32[] public itemIds;
     uint256 public menuItemsTotal;
     mapping(bytes32 => MenuItem) public menuItems; // Change to mapping
 
@@ -45,7 +45,7 @@ contract Restaurant {
     event RestaurantUpdated(
         string name,
         address indexed owner,
-        uint256[] itemIds
+        bytes32[] itemIds
     );
     event MenuItemAdded(
         bytes32 name,
@@ -72,6 +72,17 @@ contract Restaurant {
         return abi.encode(name, owner);
     }
 
+    function getAllMenuItems() public view returns (MenuItem[] memory) {
+        MenuItem[] memory items = new MenuItem[](menuItemsTotal);
+
+        for (uint256 i = 0; i < menuItemsTotal; ++i) {
+            bytes32 itemId = itemIds[i];
+            items[i] = menuItems[itemId];
+        }
+
+        return items;
+    }
+
     function addMenuItem(
         string memory _name,
         uint256 _price,
@@ -95,11 +106,15 @@ contract Restaurant {
         ++menuItemsTotal;
     }
 
-    function getMenuItemByBytes32(bytes32 _name) public view returns (MenuItem memory) {
+    function getMenuItemByBytes32(
+        bytes32 _name
+    ) public view returns (MenuItem memory) {
         return menuItems[_name];
     }
 
-    function getMenuItemByName(string memory _name) public view returns (MenuItem memory) {
+    function getMenuItemByName(
+        string memory _name
+    ) public view returns (MenuItem memory) {
         return menuItems[bytes32(keccak256(bytes(_name)))];
     }
 
@@ -116,7 +131,7 @@ contract Restaurant {
     function setRestaurant(
         string memory _name,
         address _newOwner,
-        uint256[] memory _ItemIds
+        bytes32[] memory _ItemIds
     ) public payable onlyOwner {
         name = _name;
         owner = _newOwner;
@@ -127,8 +142,9 @@ contract Restaurant {
 
     function getRestaurant(
         address addr
-    ) public view returns (string memory, address, uint256[] memory) {
+    ) public view returns (string memory, address, MenuItem[] memory) {
         require(addr != address(0), "Invalid address");
-        return (name, owner, itemIds);
+        MenuItem[] memory items = getAllMenuItems();
+        return (name, owner, items);
     }
 }
