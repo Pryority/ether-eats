@@ -10,6 +10,18 @@ contract RestaurantTest is Test {
     address public owner;
     uint256[] public itemIds;
 
+    struct Option {
+        bytes32 name;
+        uint256 price;
+    }
+    struct MenuItem {
+        bytes32 name;
+        uint256 price;
+        bool isAvailable;
+        bytes32 category;
+        bytes32[] options;
+    }
+
     function setUp() public {
         restaurantName = "My Restaurant";
         owner = msg.sender;
@@ -43,7 +55,37 @@ contract RestaurantTest is Test {
         assertEq(expectedItemPrice, 100);
         assertEq(expectedIsAvailable, true);
         assertEq(expectedItemCategory, "Main");
-        // assertEq(expectedItemOptions, bytes32["Option1"](2));
+    }
+
+    function testGetMenuItem() public {
+        bytes32 expectedItemName = "Product 1";
+        uint256 expectedItemPrice = 100;
+        bool expectedIsAvailable = true;
+        bytes32 expectedItemCategory = "Main";
+        bytes32[] memory expectedItemOptions = new bytes32[](2);
+        expectedItemOptions[0] = "Option1";
+        expectedItemOptions[1] = "Option2";
+
+        restaurant.addMenuItem(
+            expectedItemName,
+            expectedItemPrice,
+            expectedIsAvailable,
+            expectedItemCategory,
+            expectedItemOptions
+        );
+
+        Restaurant.MenuItem memory retrievedMenuItem = restaurant.getMenuItem(
+            expectedItemName
+        );
+
+        assertEq(retrievedMenuItem.name, expectedItemName);
+        assertEq(retrievedMenuItem.price, expectedItemPrice);
+        assertEq(retrievedMenuItem.isAvailable, expectedIsAvailable);
+        assertEq(retrievedMenuItem.category, expectedItemCategory);
+        assertEq(retrievedMenuItem.options.length, expectedItemOptions.length);
+        for (uint256 i = 0; i < expectedItemOptions.length; i++) {
+            assertEq(retrievedMenuItem.options[i], expectedItemOptions[i]);
+        }
     }
 
     function testSetRestaurant() public {
