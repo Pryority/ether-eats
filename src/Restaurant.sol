@@ -45,7 +45,6 @@ contract Restaurant {
     event RestaurantUpdated(
         string name,
         address indexed owner,
-        address indexed newOwner,
         uint256[] itemIds
     );
     event MenuItemAdded(
@@ -74,13 +73,13 @@ contract Restaurant {
     }
 
     function addMenuItem(
-        bytes32 _name,
+        string memory _name,
         uint256 _price,
         bool _isAvailable,
         bytes32 _category,
         bytes32[] memory _options
-    ) public payable {
-        bytes32 itemName = bytes32(_name);
+    ) public payable onlyOwner {
+        bytes32 itemName = bytes32(keccak256(bytes(_name)));
         // Create a new MenuItem and add it to the menuItems mapping
         MenuItem memory newItem = MenuItem(
             itemName,
@@ -91,24 +90,27 @@ contract Restaurant {
         );
         menuItems[itemName] = newItem;
 
-        emit MenuItemAdded(_name, _price, _category, _options);
+        emit MenuItemAdded(itemName, _price, _category, _options);
 
         ++menuItemsTotal;
     }
 
-    function getMenuItem(bytes32 _name) public view returns (MenuItem memory) {
+    function getMenuItemByBytes32(bytes32 _name) public view returns (MenuItem memory) {
         return menuItems[_name];
     }
 
-    // function getMenuItemByName(
-    //     string memory _name
-    // ) public view returns (MenuItem memory) {
-    //     bytes32 itemName = bytes32(uint256(keccak256(abi.encodePacked(_name))));
-    //     return menuItems[itemName];
-    // }
+    function getMenuItemByName(string memory _name) public view returns (MenuItem memory) {
+        return menuItems[bytes32(keccak256(bytes(_name)))];
+    }
 
     function getMenuItemsTotal() public view returns (uint256) {
         return menuItemsTotal;
+    }
+
+    function setName(string memory _name) public payable onlyOwner {
+        name = _name;
+
+        emit RestaurantUpdated(name, owner, itemIds);
     }
 
     function setRestaurant(
@@ -120,7 +122,7 @@ contract Restaurant {
         owner = _newOwner;
         itemIds = _ItemIds;
 
-        emit RestaurantUpdated(name, msg.sender, _newOwner, itemIds);
+        emit RestaurantUpdated(name, owner, itemIds);
     }
 
     function getRestaurant(
