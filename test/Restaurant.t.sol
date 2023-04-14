@@ -60,32 +60,6 @@ contract RestaurantTest is Test {
         assertEq(restaurant.itemIds(1), newItemIds[1]);
     }
 
-    // function testAddMenuItem() public {
-    //     // Define the options for the new MenuItem
-    //     bytes32[] memory itemOptions = new bytes32[](2);
-    //     itemOptions[0] = "Option1";
-    //     itemOptions[1] = "Option2";
-
-    //     // Call the addMenuItem function with the options
-    //     bytes32 itemName = "Burger";
-    //     uint256 itemPrice = 10;
-    //     bytes32 itemCategory = "Main";
-    //     restaurant.addMenuItem(itemName, itemPrice, itemCategory, itemOptions);
-
-    //     // Retrieve the newly added MenuItem from the Restaurant contract
-    //     Restaurant.MenuItem memory newItem = restaurant.menuItems(itemName);
-
-    //     // Assert that the retrieved MenuItem has the correct values
-    //     assertEq(newItem.name, itemName);
-    //     assertEq(newItem.price, itemPrice);
-    //     assertEq(newItem.category, itemCategory);
-
-    //     // Assert that the retrieved MenuItem has the correct options
-    //     assertEq(newItem.options.length, 2);
-    //     assertEq(newItem.options[0], "Option1");
-    //     assertEq(newItem.options[1], "Option2");
-    // }
-
     function testGetRestaurant() public {
         (
             string memory retrievedName,
@@ -97,46 +71,3 @@ contract RestaurantTest is Test {
         assertEq(retrieveditemIds.length, 0); // Assuming itemIds should be empty initially
     }
 }
-
-// function testCreateMenuItem() public {
-//     // Create an Option array to pass as an argument to createMenuItem function
-//     Restaurant.Option[] memory options = new Restaurant.Option[](2);
-//     options[0] = Restaurant.Option("Option 1", 50);
-//     options[1] = Restaurant.Option("Option 2", 100);
-
-//     // Call createMenuItem function
-//     restaurant.addMenuItem("Product 1", 100, true, options);
-
-//     // Assert that the menu item count has increased by 1
-//     uint256 itemCount = restaurant.getItemCount();
-//     assertEq(itemCount, 1);
-
-//     // Retrieve the created MenuItem
-//     Restaurant.MenuItem memory newItem = restaurant.menuItems(
-//         itemCount - 1
-//     ); // MenuItem index is 0-based
-
-//     // Assert the properties of the created menu item
-//     assertEq(newItem.name, "Product 1");
-//     assertEq(newItem.price, 100);
-//     assertTrue(newItem.isAvailable);
-
-//     // Assert that the created menu item has the correct options
-//     assertEq(newItem.options.length, 2);
-//     assertEq(newItem.options[0].name, "Option 1");
-//     assertEq(newItem.options[0].price, 50);
-//     assertEq(newItem.options[1].name, "Option 2");
-//     assertEq(newItem.options[1].price, 100);
-// }
-
-// function testOnlyOwnerModifier() public {
-//     string memory newName = "New Restaurant";
-//     address newOwner = address(0x1234567890123456789012345678901234567890);
-//     uint256[] memory newItemIds = new uint256[](2);
-//     newItemIds[0] = 1;
-//     newItemIds[1] = 2;
-//     // Try to call setRestaurant from an address other than the owner
-//     restaurant.setRestaurant(newName, newOwner, newItemIds, from(owner));
-//     // Assert that the transaction reverts
-//     assertEq(vm.exception(), uint32(Exception.Revert));
-// }
