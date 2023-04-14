@@ -42,7 +42,6 @@ contract RestaurantTest is Test {
     function testAddMenuItem() public {
         vm.prank(owner);
         string memory expectedItemName = "Product 1";
-        bytes32 expectedItemNameBytes32 = bytes32(keccak256(bytes(expectedItemName)));
         uint256 expectedItemPrice = 100;
         bool expectedIsAvailable = true;
         bytes32 expectedItemCategory = "Main";
@@ -68,7 +67,9 @@ contract RestaurantTest is Test {
     function testGetMenuItemByBytes32() public {
         vm.prank(owner);
         string memory expectedItemName = "Product 1";
-        bytes32 expectedItemNameBytes32 = bytes32(keccak256(bytes(expectedItemName)));
+        bytes32 expectedItemNameBytes32 = bytes32(
+            keccak256(bytes(expectedItemName))
+        );
 
         uint256 expectedItemPrice = 100;
         bool expectedIsAvailable = true;
@@ -85,9 +86,8 @@ contract RestaurantTest is Test {
             expectedItemOptions
         );
 
-        Restaurant.MenuItem memory retrievedMenuItem = restaurant.getMenuItemByBytes32(
-            bytes32(keccak256(bytes(expectedItemName)))
-        );
+        Restaurant.MenuItem memory retrievedMenuItem = restaurant
+            .getMenuItemByBytes32(bytes32(keccak256(bytes(expectedItemName))));
 
         assertEq(retrievedMenuItem.name, expectedItemNameBytes32);
         assertEq(retrievedMenuItem.price, expectedItemPrice);
@@ -101,9 +101,23 @@ contract RestaurantTest is Test {
 
     function testGetMenuItemByName() public {
         vm.startPrank(owner);
-        restaurant.addMenuItem("Product 1", 100, true, "Main", new bytes32[](0));
-        restaurant.addMenuItem("Product 2", 200, true, "Dessert", new bytes32[](0));
-        Restaurant.MenuItem memory item = restaurant.getMenuItemByName("Product 1");
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        restaurant.addMenuItem(
+            "Product 2",
+            200,
+            true,
+            "Dessert",
+            new bytes32[](0)
+        );
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByName(
+            "Product 1"
+        );
         assertEq(item.name, bytes32(keccak256(bytes("Product 1"))));
         assertEq(item.price, 100);
         assertEq(item.isAvailable, true);
@@ -111,7 +125,6 @@ contract RestaurantTest is Test {
         assertEq(item.options.length, 0);
         vm.stopPrank();
     }
-
 
     // function testGetMenuItemByName() public {
     //     vm.prank(owner);
@@ -142,7 +155,6 @@ contract RestaurantTest is Test {
     //         assertEq(retrievedItem.options[i], expectedItemOptions[i]);
     //     }
     // }
-
 
     function testSetRestaurant() public {
         vm.prank(owner);
