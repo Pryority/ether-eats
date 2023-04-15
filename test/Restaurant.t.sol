@@ -99,6 +99,97 @@ contract RestaurantTest is Test {
         }
     }
 
+    function testSetMenuItemName() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
+        bytes32 newName = bytes32(keccak256(bytes("New Product 1")));
+        restaurant.setMenuItemName(itemId, newName);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        assertEq(item.name, newName);
+        vm.stopPrank();
+    }
+
+    function testSetMenuItemPrice() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
+        uint256 newPrice = 200;
+        restaurant.setMenuItemPrice(itemId, newPrice);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        assertEq(item.price, newPrice);
+        vm.stopPrank();
+    }
+
+    function testSetMenuItemAvailability() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
+        bool newAvailability = false;
+        restaurant.setMenuItemAvailability(itemId, newAvailability);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        assertEq(item.isAvailable, newAvailability);
+        vm.stopPrank();
+    }
+
+    function testSetMenuItemCategory() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
+        bytes32 newCategory = bytes32(keccak256(bytes("Dessert")));
+        restaurant.setMenuItemCategory(itemId, newCategory);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        assertEq(item.category, newCategory);
+        vm.stopPrank();
+    }
+
+    function testSetMenuItemOptions() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
+        bytes32[] memory newOptions = new bytes32[](2);
+        newOptions[0] = bytes32(keccak256(bytes("Option1")));
+        newOptions[1] = bytes32(keccak256(bytes("Option2")));
+        restaurant.setMenuItemOptions(itemId, newOptions);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        assertEq(item.options.length, newOptions.length);
+        for (uint256 i = 0; i < newOptions.length; i++) {
+            assertEq(item.options[i], newOptions[i]);
+        }
+        vm.stopPrank();
+    }
+
+
     function testGetMenuItemByName() public {
         vm.startPrank(owner);
         restaurant.addMenuItem(
