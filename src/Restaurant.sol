@@ -106,6 +106,31 @@ contract Restaurant {
         ++menuItemsTotal;
     }
 
+    function setMenuItemName(bytes32 _itemId, bytes32 _name) public onlyOwner {
+        require(menuItems[_itemId].name != bytes32(0), "Item not found");
+        menuItems[_itemId].name = _name;
+    }
+
+    function setMenuItemPrice(bytes32 _itemId, uint256 _price) public onlyOwner {
+        require(menuItems[_itemId].name != bytes32(0), "Item not found");
+        menuItems[_itemId].price = _price;
+    }
+
+    function setMenuItemAvailability(bytes32 _itemId, bool _isAvailable) public onlyOwner {
+        require(menuItems[_itemId].name != bytes32(0), "Item not found");
+        menuItems[_itemId].isAvailable = _isAvailable;
+    }
+
+    function setMenuItemCategory(bytes32 _itemId, bytes32 _category) public onlyOwner {
+        require(menuItems[_itemId].name != bytes32(0), "Item not found");
+        menuItems[_itemId].category = _category;
+    }
+
+    function setMenuItemOptions(bytes32 _itemId, bytes32[] memory _options) public onlyOwner {
+        require(menuItems[_itemId].name != bytes32(0), "Item not found");
+        menuItems[_itemId].options = _options;
+    }
+
     function getMenuItemByBytes32(
         bytes32 _name
     ) public view returns (MenuItem memory) {
