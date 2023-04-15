@@ -111,7 +111,9 @@ contract RestaurantTest is Test {
         bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
         bytes32 newName = bytes32(keccak256(bytes("New Product 1")));
         restaurant.setMenuItemName(itemId, newName);
-        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(
+            itemId
+        );
         assertEq(item.name, newName);
         vm.stopPrank();
     }
@@ -128,7 +130,9 @@ contract RestaurantTest is Test {
         bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
         uint256 newPrice = 200;
         restaurant.setMenuItemPrice(itemId, newPrice);
-        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(
+            itemId
+        );
         assertEq(item.price, newPrice);
         vm.stopPrank();
     }
@@ -145,7 +149,9 @@ contract RestaurantTest is Test {
         bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
         bool newAvailability = false;
         restaurant.setMenuItemAvailability(itemId, newAvailability);
-        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(
+            itemId
+        );
         assertEq(item.isAvailable, newAvailability);
         vm.stopPrank();
     }
@@ -162,7 +168,9 @@ contract RestaurantTest is Test {
         bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
         bytes32 newCategory = bytes32(keccak256(bytes("Dessert")));
         restaurant.setMenuItemCategory(itemId, newCategory);
-        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(
+            itemId
+        );
         assertEq(item.category, newCategory);
         vm.stopPrank();
     }
@@ -181,14 +189,15 @@ contract RestaurantTest is Test {
         newOptions[0] = bytes32(keccak256(bytes("Option1")));
         newOptions[1] = bytes32(keccak256(bytes("Option2")));
         restaurant.setMenuItemOptions(itemId, newOptions);
-        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(itemId);
+        Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(
+            itemId
+        );
         assertEq(item.options.length, newOptions.length);
         for (uint256 i = 0; i < newOptions.length; i++) {
             assertEq(item.options[i], newOptions[i]);
         }
         vm.stopPrank();
     }
-
 
     function testGetMenuItemByName() public {
         vm.startPrank(owner);
@@ -214,6 +223,98 @@ contract RestaurantTest is Test {
         assertEq(item.isAvailable, true);
         assertEq(item.category, "Main");
         assertEq(item.options.length, 0);
+        vm.stopPrank();
+    }
+
+    // function testDeleteMenuItem() public {
+    //     // Start prank
+    //     vm.startPrank(owner);
+
+    //     // Add a new menu item
+    //     string memory itemName = "Product 1";
+    //     bytes32 itemId = bytes32(keccak256(bytes(itemName)));
+    //     restaurant.addMenuItem(itemName, 100, true, "Main", new bytes32[](0));
+
+    //     // Delete the menu item
+    //     restaurant.deleteMenuItem(itemId);
+
+    //     // Retrieve the deleted menu item and check its properties
+    //     Restaurant.MenuItem memory item = restaurant.getMenuItemByBytes32(
+    //         itemId
+    //     );
+    //     assertEq(item.name, bytes32(0), "Item name should be empty");
+    //     assertEq(item.price, 0, "Item price should be zero");
+    //     assertEq(item.isAvailable, false, "Item availability should be false");
+    //     assertEq(item.category, bytes32(0), "Item category should be empty");
+    //     assertEq(item.options.length, 0, "Item options length should be zero");
+
+    //     // Stop prank
+    //     vm.stopPrank();
+    // }
+
+    // function testUpdateMenuItemOption() public {
+    //     vm.startPrank(owner);
+    //     restaurant.addMenuItem(
+    //         "Product 1",
+    //         100,
+    //         true,
+    //         "Main",
+    //         new bytes32[](0)
+    //     );
+    //     bytes32 itemId = bytes32(keccak256(bytes("Product 1")));
+    //     bytes32 optionId = bytes32(keccak256(bytes("Option1")));
+    //     uint256 newPrice = 150;
+    //     restaurant.setMenuItemOptionPrice(itemId, optionId, newPrice);
+    //     uint256 retrievedPrice = restaurant.getMenuItemOptionPrice(
+    //         itemId,
+    //         optionId
+    //     );
+    //     assertEq(retrievedPrice, newPrice);
+    //     vm.stopPrank();
+    // }
+
+    function testAddOption() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 optionId = bytes32(keccak256(bytes("Option 1")));
+        string memory optionName = "Option 1";
+        uint256 optionPrice = 1000;
+        restaurant.addOption(optionId, optionName, optionPrice);
+
+        // Assert that the option was added correctly
+        (bytes32 retrievedOptionName, uint256 retrievedOptionPrice) = restaurant
+            .getOption(optionId);
+        assertEq(retrievedOptionName, bytes32(keccak256(bytes(optionName))));
+        assertEq(retrievedOptionPrice, optionPrice);
+        vm.stopPrank();
+    }
+
+    function testGetOption() public {
+        vm.startPrank(owner);
+        restaurant.addMenuItem(
+            "Product 1",
+            100,
+            true,
+            "Main",
+            new bytes32[](0)
+        );
+        bytes32 optionId = bytes32(keccak256(bytes("Option 1")));
+        string memory optionName = "Option 1";
+        uint256 optionPrice = 1000;
+        restaurant.addOption(optionId, optionName, optionPrice);
+
+        // Assert that the option was added correctly
+        (bytes32 retrievedOptionName, uint256 retrievedOptionPrice) = restaurant
+            .getOption(optionId);
+        // Assert that the returned option has the correct name and price
+        assertEq(retrievedOptionName, bytes32(keccak256(bytes("Option 1"))));
+        assertEq(retrievedOptionPrice, 1000);
         vm.stopPrank();
     }
 
